@@ -16,9 +16,12 @@ public class OAuthClientTest {
 
     FhirContext ctx = FhirContext.forR4();
 
-//    IGenericClient client = ctx.newRestfulGenericClient("http://101.79.14.160:8080/fhir");
-    IGenericClient client = ctx.newRestfulGenericClient("http://localhost:8080/fhir");
-    //    {"error":"invalid_token","error_description":"Token was not recognised"} 발생할 경우 신규 토큰 발급되어야합니다. syhan@iteyes.co.kr 로 문의부탁드리겠습니다.
+    IGenericClient client = ctx.newRestfulGenericClient("http://101.79.14.160:8080/fhir");
+//    IGenericClient client = ctx.newRestfulGenericClient("http://localhost:8080/fhir");
+
+    //정상적인 token 인증을 수행하기 위해서는 FHIR JPA Server AuthenticationInterceptor를 먼저 켜주셔야합니다.
+
+    //token_expired 또는 {"error":"invalid_token","error_description":"Token was not recognised"} 발생할 경우 신규 토큰 발급되어야합니다. syhan@iteyes.co.kr 로 문의부탁드리겠습니다.
     String token = "488ee80b-2482-45b9-af71-3e9850d09557"; //user
     BearerTokenAuthInterceptor authInterceptor = new BearerTokenAuthInterceptor(token);
 

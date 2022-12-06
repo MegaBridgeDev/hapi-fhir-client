@@ -535,10 +535,21 @@ public class GenericClient extends BaseClient implements IGenericClient {
 
 		protected <Z> Z invoke(Map<String, List<String>> theParams, IClientResponseHandler<Z> theHandler, BaseHttpClientInvocation theInvocation) {
 			if (isKeepResponses()) {
+
 				myLastRequest = theInvocation.asHttpRequest(getServerBase(), theParams, getEncoding(), myPrettyPrint);
+
 			}
+			System.out.println("myContext = " + myContext);
+			System.out.println("theHandler = " + theHandler);
+			System.out.println("theInvocation = " + theInvocation);
+			System.out.println("myParamEncoding = " + myParamEncoding);
+			System.out.println("myPrettyPrint.values() = " + myPrettyPrint);
+			System.out.println(" = " + myQueryLogRequestAndResponse +"= "+ myLogRequestAndResponse+"= "+mySummaryMode+"= "+ mySubsetElements+"= "+ myCacheControlDirective+"= "+ myCustomAcceptHeaderValue+"= "+ myCustomHeaderValues);
+			System.out.println("isKeepResponses = " + isKeepResponses());
 
 			Z resp = invokeClient(myContext, theHandler, theInvocation, myParamEncoding, myPrettyPrint, myQueryLogRequestAndResponse || myLogRequestAndResponse, mySummaryMode, mySubsetElements, myCacheControlDirective, myCustomAcceptHeaderValue, myCustomHeaderValues);
+
+			System.out.println("resp.toString() = " + resp.toString());
 			return resp;
 		}
 
@@ -547,6 +558,7 @@ public class GenericClient extends BaseClient implements IGenericClient {
 			if (encoding == null) {
 				throw new IllegalArgumentException(Msg.code(1368) + myContext.getLocalizer().getMessage(GenericClient.class, "cantDetermineRequestType"));
 			}
+			System.out.println("!!!Check theResourceBody = " + theResourceBody);
 			return encoding.newParser(myContext).parseResource(theResourceBody);
 		}
 
