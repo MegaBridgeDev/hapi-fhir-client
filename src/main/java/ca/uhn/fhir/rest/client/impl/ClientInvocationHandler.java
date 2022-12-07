@@ -54,20 +54,20 @@ public class ClientInvocationHandler extends BaseClient implements InvocationHan
 	public Object invoke(Object theProxy, Method theMethod, Object[] theArgs) throws Throwable {
 		Object directRetVal = myMethodToReturnValue.get(theMethod);
 		if (directRetVal != null) {
-			System.out.println("directRetVal = " + directRetVal);
+//			System.out.println("directRetVal = " + directRetVal);
 			return directRetVal;
 		}
 
 		BaseMethodBinding<?> binding = myBindings.get(theMethod);
 		if (binding != null) {
-			System.out.println("binding = " + binding);
+//			System.out.println("binding = " + binding);
 			BaseHttpClientInvocation clientInvocation = binding.invokeClient(theArgs);
 			return invokeClient(myContext, binding, clientInvocation);
 		}
 
 		ILambda lambda = myMethodToLambda.get(theMethod);
 		if (lambda != null) {
-			System.out.println("lambda = " + lambda);
+//			System.out.println("lambda = " + lambda);
 			return lambda.handle(this, theArgs);
 		}
 

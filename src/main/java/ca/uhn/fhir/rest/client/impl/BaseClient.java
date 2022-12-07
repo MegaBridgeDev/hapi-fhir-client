@@ -289,7 +289,7 @@ public abstract class BaseClient implements IRestfulClient {
 			}
 
 			httpRequest = clientInvocation.asHttpRequest(myUrlBase, params, encoding, thePrettyPrint);
-			System.out.println("clientInvocation.asHttpRequest(myUrlBase, params, encoding, thePrettyPrint); = " + myUrlBase+" = " +  params+" = " + encoding+" = " + thePrettyPrint);
+//			System.out.println("clientInvocation.asHttpRequest(myUrlBase, params, encoding, thePrettyPrint); = " + myUrlBase+" = " +  params+" = " + encoding+" = " + thePrettyPrint);
 			if (isNotBlank(theCustomAcceptHeader)) {
 				httpRequest.removeHeaders(Constants.HEADER_ACCEPT);
 				httpRequest.addHeader(Constants.HEADER_ACCEPT, theCustomAcceptHeader);
@@ -330,8 +330,8 @@ public abstract class BaseClient implements IRestfulClient {
 
 
 			if (httpRequest.getRequestBodyFromStream() != null){
-				System.out.println("body = " + httpRequest.getRequestBodyFromStream());
-				System.out.println("requestParams = " + requestParams.values());
+//				System.out.println("body = " + httpRequest.getRequestBodyFromStream());
+//				System.out.println("requestParams = " + requestParams.values());
 			}
 
 
@@ -419,7 +419,7 @@ public abstract class BaseClient implements IRestfulClient {
 				}
 
 
-				System.out.println("inputStreamToReturn = " + inputStreamToReturn);
+//				System.out.println("inputStreamToReturn = " + inputStreamToReturn);
 				return binding.invokeClient(mimeType, inputStreamToReturn, response.getStatus(), headers);
 			}
 
@@ -613,7 +613,7 @@ public abstract class BaseClient implements IRestfulClient {
 			EncodingEnum respType = EncodingEnum.forContentType(theResponseMimeType);
 			if (respType == null) {
 				if (myAllowHtmlResponse && theResponseMimeType.toLowerCase().contains(Constants.CT_HTML) && myReturnType != null) {
-					System.out.println("어디로 들어오는지 확인중 111111111"+readHtmlResponse(theResponseInputStream));
+//					System.out.println("어디로 들어오는지 확인중 111111111"+readHtmlResponse(theResponseInputStream));
 					return readHtmlResponse(theResponseInputStream);
 				}
 				throw NonFhirResponseException.newInstance(theResponseStatusCode, theResponseMimeType, theResponseInputStream);
@@ -624,7 +624,7 @@ public abstract class BaseClient implements IRestfulClient {
 				parser.setPreferTypes(myPreferResponseTypes);
 			}
 			T retVal = parser.parseResource(myReturnType, theResponseInputStream);
-			System.out.println("어디로 들어오는지 확인중 222222222" + retVal);
+//			System.out.println("어디로 들어오는지 확인중 222222222" + retVal);
 			MethodUtil.parseClientRequestResourceHeaders(myId, theHeaders, retVal);
 
 			return retVal;

@@ -37,7 +37,7 @@ public class OAuthClientTest {
                 .returnBundle(Bundle.class)
                 .execute();
 
-        System.out.println("Found " + results.getEntry().size() + " patients named 'Test'");
+//        System.out.println("Found " + results.getEntry().size() + " patients named 'Test'");
     }
 
     @Test
