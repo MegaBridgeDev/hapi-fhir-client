@@ -56,12 +56,16 @@ public class ClientTest {
                     .execute();
             patients.addAll(BundleUtil.toListOfResources(ctx, results));
         }
+        try {
+            for (int i = 0 ; patients.size() > i; i ++){
+                Patient patient0 = (Patient) patients.get(i);
+                System.out.println("PatientInfo " + patient0.getName().get(0).getFamily()  + " Name!");
+                System.out.println("PatientInfo " + patient0.getIdentifier().get(0).getSystem()  + " Identifier!");
+            }
+        }catch (Exception e){
 
-        for (int i = 0 ; patients.size() > i; i ++){
-            Patient patient0 = (Patient) patients.get(i);
-            System.out.println("PatientInfo " + patient0.getName().get(0).getFamily()  + " Name!");
-            System.out.println("PatientInfo " + patient0.getIdentifier().get(0).getSystem()  + " Identifier!");
         }
+
 
     }
 

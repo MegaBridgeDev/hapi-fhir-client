@@ -45,8 +45,8 @@ public class AESCryptoUtil {
         Cipher cipher = Cipher.getInstance(specName);
         cipher.init(Cipher.DECRYPT_MODE, key, iv);
         byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(cipherText));
-        return DatatypeConverter.printBase64Binary(decrypted);
-//        return new String(decrypted, StandardCharsets.UTF_8);
+//        return DatatypeConverter.printBase64Binary(decrypted);
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 
 

@@ -107,7 +107,7 @@ abstract class BaseHttpClientInvocationWithContents extends BaseHttpClientInvoca
 	@Override
 	public IHttpRequest asHttpRequest(String theUrlBase, Map<String, List<String>> theExtraParams, EncodingEnum theEncoding, Boolean thePrettyPrint) throws DataFormatException {
 		StringBuilder url = new StringBuilder();
-		System.out.println("asHttpRequest 여긴 어디냐? = ");
+//		System.out.println("asHttpRequest 여긴 어디냐? = ");
 		if (myUrlPath == null) {
 			url.append(theUrlBase);
 		} else {
@@ -156,14 +156,17 @@ abstract class BaseHttpClientInvocationWithContents extends BaseHttpClientInvoca
 		SecretKey secretKey = new SecretKeySpec(cryptoByteKey, 0 , cryptoByteKey.length, "AES");
 
 		try{
+			System.out.println("originalContents = " + contents);
 			String encryptedContents = AESCryptoUtil.encrypt(specName, secretKey, ivParameterSpec, contents);
-			System.out.println("encryptedContents = " + encryptedContents);
+			System.out.println("encryptedContents1 = " + encryptedContents);
 			String jsonContents = "{\"cryptedData\":\""+encryptedContents +"\"}";
+			System.out.println("jsonContents = " + jsonContents);
+			System.out.println("encryptedContents2 = " + encryptedContents);
 			String decryptContents = AESCryptoUtil.decrypt(specName, secretKey, ivParameterSpec, encryptedContents);
 			System.out.println("decryptContents = " + decryptContents);
 
 
-			return httpClient.createByteRequest(getContext(), jsonContents, contentType, encoding);
+			return httpClient.createByteRequest(getContext(), contents, contentType, encoding);
 		}catch (Exception e){
 			e.printStackTrace();
 			return httpClient.createByteRequest(getContext(), contents, contentType, encoding);
