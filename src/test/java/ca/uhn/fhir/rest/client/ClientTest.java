@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 import ca.uhn.fhir.util.BundleUtil;
+import kr.co.iteyes.fhir.jpa.security.interceptor.RequestChangeInterceptor;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
@@ -25,8 +26,13 @@ public class ClientTest {
     IRestfulClientFactory clientFactory = ctx.getRestfulClientFactory();
 
 
+    RequestChangeInterceptor requestChangeInterceptor = new RequestChangeInterceptor();
+
+
     @Test
     public void getPatientCount(){
+//        client.registerInterceptor(requestChangeInterceptor);
+
         Bundle results = client
                 .search()
                 .forResource(Patient.class)
@@ -37,13 +43,22 @@ public class ClientTest {
         System.out.println("Found " + results.getEntry().size() + " patients named 'Test'");
     }
 
+
+
     @Test
     public void getPatientInfo(){
+//        client.registerInterceptor(requestChangeInterceptor);
+
         Bundle results = client
                 .search()
                 .forResource(Patient.class)
+
+//                .accept("application/fhir+json")
+//                .accept("json")
+//                .prettyPrint()
 //                .where(Patient.FAMILY.matches().values("Test")) //검색 조건문
                 .returnBundle(Bundle.class)
+
                 .execute();
         List<IBaseResource> patients = new ArrayList<>();
         patients.addAll(BundleUtil.toListOfResources(ctx, results));
@@ -121,12 +136,19 @@ public class ClientTest {
                 .setUrl("Patient")
                 .setMethod(Bundle.HTTPVerb.POST);
 
+        String sampleBundle = "{\"resourceType\":\"Bundle\",\"type\":\"transaction\",\"entry\":[{\"fullUrl\":\"urn:uuid:cccf060b-6b2e-4436-9275-6dce28cd7565\",\"resource\":{\"resourceType\":\"Patient\",\"identifier\":[{\"system\":\"http://acme.org/mrns\",\"value\":\"12345\"}],\"name\":[{\"family\":\"Test01\",\"given\":[\"Test2\",\"Test2\"]}],\"gender\":\"male\"},\"request\":{\"method\":\"POST\",\"url\":\"Patient\"}}]}";
 
+        System.out.println("sampleBundle.toString() = " + sampleBundle.toString());
         // Log the request
-        Bundle resp = client.transaction().withBundle(bundle).execute();
+//        Bundle resp = client.transaction().withBundle(bundle).execute();
+
+//        client.
+        String resp = client.transaction().withBundle(sampleBundle).execute();
+
+
 
         // Log the response
-        System.out.println(ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(resp));
+        System.out.println("resp : " +resp);
 
     }
 

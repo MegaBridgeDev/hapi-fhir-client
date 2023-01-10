@@ -247,7 +247,7 @@ public abstract class BaseClient implements IRestfulClient {
 	protected <T> T invokeClient(FhirContext theContext, IClientResponseHandler<T> binding, BaseHttpClientInvocation clientInvocation, EncodingEnum theEncoding, Boolean thePrettyPrint,
 							 boolean theLogRequestAndResponse, SummaryEnum theSummaryMode, Set<String> theSubsetElements, CacheControlDirective theCacheControlDirective, String theCustomAcceptHeader,
 							 Map<String, List<String>> theCustomHeaders) {
-
+//		System.out.println("도착확인11 " );
 		if (!myDontValidateConformance) {
 			myFactory.validateServerBaseIfConfiguredToDoSo(myUrlBase, myClient, this);
 		}
@@ -409,6 +409,7 @@ public abstract class BaseClient implements IRestfulClient {
 				if (ourLog.isTraceEnabled() || myKeepResponses || theLogRequestAndResponse) {
 					if (inputStream != null) {
 						String responseString = IOUtils.toString(inputStream, Charsets.UTF_8);
+//						System.out.println("responseString = " + responseString);
 						keepResponseAndLogIt(theLogRequestAndResponse, response, responseString);
 						inputStreamToReturn = new ByteArrayInputStream(responseString.getBytes(Charsets.UTF_8));
 					}

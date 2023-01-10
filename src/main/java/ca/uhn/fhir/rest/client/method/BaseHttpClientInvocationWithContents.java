@@ -32,7 +32,7 @@ import ca.uhn.fhir.rest.client.api.IHttpClient;
 import ca.uhn.fhir.rest.client.api.IHttpRequest;
 import ca.uhn.fhir.rest.client.impl.BaseHttpClientInvocation;
 import kr.co.iteyes.fhir.jpa.security.config.CryptoConfig;
-import kr.co.iteyes.fhir.jpa.security.util.AESCryptoUtil;
+import kr.co.iteyes.fhir.jpa.security.util.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseBinary;
@@ -42,6 +42,8 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -104,6 +106,11 @@ abstract class BaseHttpClientInvocationWithContents extends BaseHttpClientInvoca
 		myBundleType = null;
 	}
 
+	public MymdLz4Util lz4Utils = new MymdLz4Util();
+
+	String publicKey="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApon6bkuuTvA8loXvOu+ZUC97U/0cfSbzz/m8etBaiLwTQaSVhnpPpQuQyb6RG2lH+wGVFQqauLqHlb9jxUyAIHkN+t9T0QjbkkkWtVlg74R3922UtNH9gjckFsKIGULhDi2xfLtJy6Cg0U4ZkXqSEKo0ZuOdw1NvBGsl8ujQD2uWwMw4TBUFtFt0xMajMUczDv5PNmO7yPIni0PCT2dbGJo3Kp5IChgvmUUbnWUmVuPmVxJtM0yUCUleFfHHmk/9xvMINu60wY1FMmzoXhStZa1jbIjPQufYHA/6wS37uoHs+Vtes+AiJNVlzpd9ZsRlapemeeVYejU4eb/NgDC/YQIDAQAB";
+
+
 	@Override
 	public IHttpRequest asHttpRequest(String theUrlBase, Map<String, List<String>> theExtraParams, EncodingEnum theEncoding, Boolean thePrettyPrint) throws DataFormatException {
 		StringBuilder url = new StringBuilder();
@@ -146,7 +153,7 @@ abstract class BaseHttpClientInvocationWithContents extends BaseHttpClientInvoca
 		encoding = ObjectUtils.defaultIfNull(encoding,  EncodingEnum.JSON);
 		String contents = encodeContents(thePrettyPrint, encoding);
 		String contentType = getContentType(encoding);
-//		System.out.println("여긴 어디냐? = " + encoding + " = " + contents);
+		System.out.println("여긴 어디냐? = " + encoding + " = " + contents);
 
 		IvParameterSpec ivParameterSpec = AESCryptoUtil.getIv();
 
@@ -156,17 +163,42 @@ abstract class BaseHttpClientInvocationWithContents extends BaseHttpClientInvoca
 		SecretKey secretKey = new SecretKeySpec(cryptoByteKey, 0 , cryptoByteKey.length, "AES");
 
 		try{
-			System.out.println("originalContents = " + contents);
-			String encryptedContents = AESCryptoUtil.encrypt(specName, secretKey, ivParameterSpec, contents);
-			System.out.println("encryptedContents1 = " + encryptedContents);
-			String jsonContents = "{\"cryptedData\":\""+encryptedContents +"\"}";
-			System.out.println("jsonContents = " + jsonContents);
-			System.out.println("encryptedContents2 = " + encryptedContents);
-			String decryptContents = AESCryptoUtil.decrypt(specName, secretKey, ivParameterSpec, encryptedContents);
-			System.out.println("decryptContents = " + decryptContents);
+//			System.out.println("originalContents = " + contents);
+//			String encryptedContents = AESCryptoUtil.encrypt(specName, secretKey, ivParameterSpec, contents);
+//			System.out.println("encryptedContents1 = " + encryptedContents);
+//			String jsonContents = "{\"cryptedData\":\""+encryptedContents +"\"}";
+//			System.out.println("jsonContents = " + jsonContents);
+//			System.out.println("encryptedContents2 = " + encryptedContents);
+
+//			String sampleBundle = "{\"resourceType\":\"Bundle\"}";
+			String sampleBundle = contents;
+			System.out.println("sampleBundle = " + sampleBundle);
+			byte[] compressedBundle = lz4Utils.compress(sampleBundle.getBytes((StandardCharsets.UTF_8)));
+			System.out.println("compressedBundle = " + compressedBundle);
+			String strCompressedBundle = DatatypeConverter.printBase64Binary(compressedBundle);
+			System.out.println("strCompressedBundle = " + strCompressedBundle);
+//        byte[] decompressBundle = lz4Utils.decompress(Base64.getDecoder().decode(strCompressedBundle));
+//        System.out.println("decompressBundle = " + new String(decompressBundle));
+			try {
+				String encryptedText = MymdRsaUtil.encrypt(strCompressedBundle, publicKey);
+				System.out.println("encryptedText = " + encryptedText);
+				return httpClient.createByteRequest(getContext(), encryptedText, contentType, encoding);
+			}catch (Exception e){
+				e.printStackTrace();
+				return httpClient.createByteRequest(getContext(), contents, contentType, encoding);
+			}
+//            String encryptedText = RSAUtils.encryptRSA(new String(compressedBundle), publicKey.substring(0,8));
 
 
-			return httpClient.createByteRequest(getContext(), contents, contentType, encoding);
+
+
+//			String decryptContents = AESCryptoUtil.decrypt(specName, secretKey, ivParameterSpec, encryptedContents);
+
+//			System.out.println("decryptContents = " + decryptContents);
+//			String decryptContents = AESCryptoUtil.decrypt(specName, secretKey, ivParameterSpec, encryptedContents);
+
+//			return httpClient.createByteRequest(getContext(), jsonContents, contentType, encoding);
+
 		}catch (Exception e){
 			e.printStackTrace();
 			return httpClient.createByteRequest(getContext(), contents, contentType, encoding);

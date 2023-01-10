@@ -75,9 +75,25 @@ public abstract class BaseHttpClient implements IHttpClient {
 			}
 		}
 
+//		System.out.println("theEncoding = " + theEncoding);
+//
+//		System.out.println("theContext = " + theContext);
+
+		
 		theHttpRequest.addHeader("User-Agent", HttpClientUtil.createUserAgentString(theContext, "apache"));
 		theHttpRequest.addHeader("Accept-Charset", "utf-8");
-		theHttpRequest.addHeader("Accept-Encoding", "gzip");
+//		theHttpRequest.addHeader("Accept-Encoding", "gzip");
+//		System.out.println("theHttpRequest.getAllHeaders().get(\"Accept\") = " + theHttpRequest.getAllHeaders());
+		if (theHttpRequest.getAllHeaders().containsKey("Accept") && theHttpRequest.getAllHeaders().get("Accept").equals("application/fhir+json")){
+			theHttpRequest.addHeader("Accept-Encoding", "application/fhir+json");
+		}else{
+			theHttpRequest.addHeader("Accept-Encoding", "gzip");
+		}
+
+//		theHttpRequest.addHeader("Accept-Encoding", "gzip");
+//		syhan Accept_Encdogin
+		
+		
 
 		addHeaderIfNoneExist(theHttpRequest);
 
